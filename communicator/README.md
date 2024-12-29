@@ -1,0 +1,1 @@
+# sample jsf project which works like Postman Http Client

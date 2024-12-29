@@ -1,0 +1,32 @@
+@CHARSET "ISO-8859-1";
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+
+body{
+	font-family: Tahoma, Arial, 'Open Sans', sans-serif;
+}
+#page{
+	width:90%;
+	margin:0 auto;
+}
+#logo{
+	width:160px;
+}
+#head-main{
+	display:flex;
+}
+#head-text{
+	width:calc(100% - 160px);
+}
+.head-application-title{
+	padding:40px;
+}
+.head-page-name{
+	text-align:right;
+}
+#connected-user{
+	float:left;
+}
+#logout{
+	float:right;
+}

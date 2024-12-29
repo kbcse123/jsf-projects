@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      >
+    <h:body>
+ <!-- 
+ * Backing beans for Product
+ * JsfGenerator: version 1.0
+ --> 
+ 
+    	<ui:composition template="templates/common/commonLayout.xhtml">
+    	
+    		<ui:define name="pageTitle">#{labels.product}</ui:define>
+    	
+    		<ui:define name="content">
+
+    			<p:dialog header="#{sessionBean.currentMode}" widgetVar="w-dlg-add-edit-item" id="dlg-add-edit-item" modal="true">
+                     <h:form id="frm-add-edit-item">
+
+                              <h:panelGrid id="p-add-edit-item" columns="3" cellpadding="5">
+								<p:outputLabel value="#{labels.productName}" for="productName" id="label_productName"/>
+								<p:inputText id="productName" value="#{productBean.productName}" required="true"  />
+								<p:message for="productName" />
+
+								<p:outputLabel value="#{labels.productCode}" for="productCode" id="label_productCode"/>
+								<p:inputText id="productCode" value="#{productBean.productCode}" required="true"  />
+								<p:message for="productCode" />
+
+								<p:outputLabel value="#{labels.availableQty}" for="availableQty" id="label_availableQty"/>
+								<p:inputText id="availableQty" value="#{productBean.availableQty}" required="true"  />
+								<p:message for="availableQty" />
+
+
+                                <p:commandButton
+                                    value="#{labels.validate}"
+                                    icon="pi pi-check"
+                                    actionListener="#{productBean.createOrEditItem}"
+                                    update="msgs,:frm-list-item:tbl-items,p-add-edit-item"
+                                />
+                                <p:outputLabel/>
+                                <p:commandButton
+                                    value="#{labels.cancel}"
+                                    icon="pi pi-times"
+                                    actionListener="#{productBean.cancelModifs}"
+                                    update="msgs,p-add-edit-item"
+                                    onclick="PF('w-dlg-add-edit-item').hide();"
+                                    process="@this"
+                                />
+                            </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                
+                <p:dialog header="#{labels.delete}" widgetVar="w-dlg-del-item" id="dlg-del-item" modal="true">
+                    <h:form id="frm-delete-ITEM">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:outputLabel value="#{labels.delete} ?"/>
+                            <p:outputLabel/>
+
+                            <p:commandButton icon="pi pi-check" value="#{labels.validate}" actionListener="#{productBean.deleteItem}" update="msgs,:frm-list-item:tbl-items,dlg-del-item"/>
+                            <p:commandButton icon="pi pi-times" value="#{labels.cancel}" actionListener="#{productBean.cancelModifs}" update="msgs" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                
+                
+                <div id="toolbar">
+                	<h:form>
+	                        <p:commandButton  icon="pi pi-plus"  value="#{labels.add}" process="@this" action="#{productBean.prepareAddEditDialog}" oncomplete="PF('w-dlg-add-edit-item').show();" update="dlg-add-edit-item" >
+	                            <f:setPropertyActionListener value="#{sessionBean.modeInsert}"        	target="#{sessionBean.currentMode}"/>
+	                            <f:setPropertyActionListener value=""                                	target="#{sessionBean.currentRowId}"/>
+	                        </p:commandButton>
+	                </h:form>    
+                </div>
+                
+                
+                
+                
+    		
+    	
+	    		<h:form id="frm-list-item">
+		    	   	<p:dataTable id="tbl-items" value="#{productBean.listProduct}" var="item">
+								<p:column headerText="#{labels.productName}">
+								<h:outputText value="#{item.productName}"/>
+								</p:column>
+								<p:column headerText="#{labels.productCode}">
+								<h:outputText value="#{item.productCode}"/>
+								</p:column>
+								<p:column headerText="#{labels.availableQty}">
+								<h:outputText value="#{item.availableQty}"/>
+								</p:column>
+
+    					
+    					<p:column style="width:10%;text-align:center;">    						
+                            <p:commandButton icon="pi pi-pencil" action="#{productBean.prepareAddEditDialog}" oncomplete="PF('w-dlg-add-edit-item').show();" update="dlg-add-edit-item" style="margin-right:4px;">
+                                 <f:setPropertyActionListener value="#{sessionBean.modeEdit}"            	target="#{sessionBean.currentMode}"/>
+                                 <f:setPropertyActionListener value="#{item.id}"        					target="#{sessionBean.currentRowId}"/>
+                            </p:commandButton>
+                              
+                            <p:commandButton icon="pi pi-times" onclick="PF('w-dlg-del-item').show();" update=":frm-list-item:tbl-items" >
+                                 <f:setPropertyActionListener value="#{item.id}" target="#{productBean.id}"/>
+                            </p:commandButton>
+                       	</p:column>
+		    	   	</p:dataTable>
+		    	</h:form>
+	    	
+	    	</ui:define>
+    		
+    	</ui:composition>
+ 
+    </h:body>
+ 
+</html>

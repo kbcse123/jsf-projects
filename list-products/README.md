@@ -1,0 +1,1 @@
+# Sample Project using spring boot and Joinfaces to incorporate jsf and primefaces to list products

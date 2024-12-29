@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+ 
+    <h:head>
+    	<ui:insert name="title"><title>#{applicationTitle}</title></ui:insert>
+		<h:outputStylesheet name="css/common-style.css" library="static" />
+		<h:outputStylesheet name="css/application-style.css" library="static" />
+		<!-- To support ajax actions based on jQuery -->
+		<h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
+		<f:loadBundle basename="messages.labels" var="labels" />
+    </h:head>
+ 
+    <h:body>
+ 
+		<div id="page">	
+ 
+		  	<div id="header">
+				<ui:insert name="header" >				
+				  <ui:include src="commonHeader.xhtml" />
+				</ui:insert>
+			</div>
+			<div id="state-panel">
+				<p:panel id="p-state-panel">
+				  	<ui:insert name="state-panel" >
+				 	  <ui:include src="commonStatePanel.xhtml" />
+				   	</ui:insert>
+				</p:panel>
+			</div>				
+			
+			<div id="menu-panel">
+				<ui:insert name="menu-panel" >				
+				  <ui:include src="commonMenuPanel.xhtml" /> 
+				</ui:insert>
+			</div>
+		
+	 
+		  	<div id="content">
+		  		<p:panel id="p-content">
+				  	<ui:insert name="content" >
+				 	  <ui:include src="commonContent.xhtml" />
+				   	</ui:insert>
+			   	</p:panel>
+		   	</div>
+		   
+	 
+		  
+	    	<div id="footer">
+	    		<p:panel id="p-footer">
+				  	<ui:insert name="footer" >
+				 	  <ui:include src="commonFooter.xhtml" />
+				   	</ui:insert>
+				</p:panel>
+		   	</div>
+    	    
+        </div>
+ 
+    </h:body>
+</html>
