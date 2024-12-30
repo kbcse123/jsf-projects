@@ -1,12 +1,13 @@
-package com.products.configuration;
+package com.products.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller 
-	public class HomeController {
+	public class RootController {
 	    @RequestMapping("/")
 	    public String index() {
-	        return "index.xhtml";
+			System.out.println("in index()");
+			return "index.xhtml";
 	    }
 	}

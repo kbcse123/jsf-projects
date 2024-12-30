@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3c.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Communicator</title>
+</h:head>
+<h:body style="font-size:12px;">
+
+    <style>
+        .panelStyle {
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .ui-panel-titlebar-icon {
+            display: none;
+        }
+
+        .codeStyle {
+            overflow-x: auto;
+            word-wrap: break-word;
+            cursor: default;
+        }
+        .topAligned {
+            vertical-align: top;
+        }
+        .twentyPercent {
+            vertical-align: top;
+            width: 20%;
+        }
+        .eightyPercent {
+            vertical-align: top;
+            width: 80%;
+        }
+    </style>
+
+    <p:ajaxStatus onstart="document.body.style.cursor = 'wait'"
+                  id="ajaxStatus" onsuccess="document.body.style.cursor = 'default'"/>
+    <p:growl id="growl" severity="error,info" globalOnly="true"/>
+
+    <header id="north" style="text-align:center;height:50px">
+        <b>
+            <h:outputText id="header" value="Communicator"
+                          style="font-size:25px"/>
+        </b>
+    </header>
+
+    <h:panelGrid columns="2" style="width:100%;" columnClasses="twentyPercent, eightyPercent" border="1"
+                 cellspacing="1">
+        <h:form prependId="false" id="menuForm" style="text-align:center;">
+            <h:panelGroup id="west" layout="block" >
+
+                <p:dataTable id="menuTable" var="savedReq" selectionMode="single"
+                             emptyMessage="No Saved Requests" rowKey="#{savedReq.name}"
+                             value="#{homeController.savedRequests}"
+                             selection="#{homeController.selectedSavedRequest}">
+                    <p:ajax event="rowSelect" listener="#{homeController.onRowSelect}"
+                            update="mainPanel"/>
+                    <p:column width="80%" headerText="Request Name">
+                        <h:outputText value="#{savedReq.name}"
+                                      title="#{savedReq.description}"/>
+                    </p:column>
+
+                    <p:column width="20%" headerText="Delete">
+                        <p:commandButton value="X" title="Delete Request"
+                                         action="#{homeController.deleteRequest(savedReq)}"
+                                         update="mainPanel menuForm"/>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+        </h:form>
+        <h:panelGroup id="mainPanel" layout="block">
+            <h:form id="form" prependId="false">
+                <p:blockUI block="tabview" trigger="send, new, saveBtn"
+                           widgetVar="buiBasic"/>
+                <h:panelGrid columns="2" style=" width:100%" id="inputPanel">
+                    <h:panelGrid columns="5">
+                        <p:selectOneMenu value="#{homeController.request.type}" style="width:100px">
+                            <f:selectItem itemLabel="Get" itemValue="Get"/>
+                            <f:selectItem itemLabel="Post" itemValue="Post"/>
+                        </p:selectOneMenu>
+                        <p:inputText value="#{homeController.request.url}"
+                                     placeholder="Enter Request Url" style="width:600px"/>
+                        <p:commandButton value="Send" id="send"
+                                         action="#{homeController.sendRequest}"
+                                         update="tabview:response inputPanel growl"/>
+                        <p:commandButton value="Save" onclick="PF('saveDlg').show();"/>
+                        <p:commandButton value="New" id="new"
+                                         action="#{homeController.reset}" update="mainPanel menuForm"/>
+
+                    </h:panelGrid>
+
+                    <h:outputText id="timeTaken"
+                                  style="font-weight: bold;"
+                                  value="Time : #{homeController.response.timeTaken}, #{homeController.response.status}"/>
+                </h:panelGrid>
+                <p:dialog id="saveDialog" widgetVar="saveDlg" width="500"
+                          draggable="false" height="250" closable="true"
+                          header="Save Request" focus="requestName">
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="Request Name"/>
+                        <p:inputText id="requestName"
+                                     value="#{homeController.request.name}"
+                                     placeholder="Enter Request Name" style="width:400px"/>
+                        <h:outputLabel value="Request Description"/>
+                        <p:inputTextarea id="description" autoResize="false"
+                                         placeholder="Enter Request Description"
+                                         value="#{homeController.request.description}"
+                                         style="width:420px" rows="5"/>
+                    </h:panelGrid>
+                    <p:commandButton id="saveBtn" value="Save"
+                                     onclick="PF('saveDlg').hide();"
+                                     action="#{homeController.saveRequest}"
+                                     update="menuForm mainPanel"/>
+                </p:dialog>
+                <p:tabView id="tabview">
+                    <p:tab title="Body">
+                        <h:panelGrid columns="2" style=" width:100%" id="bodyPanel">
+                            <h:panelGroup layout="block">
+                                <p:inputTextarea id="request" autoResize="false"
+                                                 value="#{homeController.request.input}" style=" width:100%"
+                                                 rows="25"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:inputTextarea id="response" autoResize="false"
+                                                 value="#{homeController.response.output}" style=" width:100%"
+                                                 rows="25"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:tab>
+
+                    <p:tab title="Headers">
+                        <h:panelGrid columns="3" id="addHeader">
+                            <p:inputText value="#{homeController.requestHeader.key}"
+                                         placeholder="Key" style="width:200px"/>
+                            <p:inputText value="#{homeController.requestHeader.value}"
+                                         placeholder="Value" style="width:200px"/>
+                            <p:commandButton value="Add New" process="addHeader"
+                                             update="addHeader headerTable"
+                                             action="#{homeController.addHeaderRow}"/>
+                        </h:panelGrid>
+
+                        <h:panelGroup layout="block" style="width:460px">
+                            <p:dataTable id="headerTable" var="headerVar"
+                                         value="#{homeController.request.headers}">
+                                <p:column>
+                                    <h:outputText value="#{headerVar.key}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{headerVar.value}"/>
+                                </p:column>
+                                <p:column style="width:50px">
+                                    <p:commandButton value="X" update="headerTable"
+                                                     action="#{homeController.deleteHeaderRow(headerVar)}"
+                                                     title="Delete Row"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGroup>
+                    </p:tab>
+                    <p:tab title="Query-Params">
+                        <h:panelGrid columns="3" id="addParam">
+                            <p:inputText value="#{homeController.requestParam.key}"
+                                         placeholder="Param Name" style="width:200px"/>
+                            <p:inputText value="#{homeController.requestParam.value}"
+                                         placeholder="Param Value" style="width:200px"/>
+                            <p:commandButton value="Add New" process="addParam"
+                                             update="addParam paramTable"
+                                             action="#{homeController.addParamRow}"/>
+                        </h:panelGrid>
+
+                        <h:panelGroup layout="block" style="width:460px">
+                            <p:dataTable id="paramTable" var="paramVar"
+                                         value="#{homeController.request.params}">
+                                <p:column>
+                                    <h:outputText value="#{paramVar.key}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{paramVar.value}"/>
+                                </p:column>
+                                <p:column style="width:50px">
+                                    <p:commandButton value="X" update="paramTable"
+                                                     action="#{homeController.deleteParamRow(paramVar)}"
+                                                     title="Delete Row"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGroup>
+                    </p:tab>
+                    <p:tab title="Authorization">
+                        <p:outputLabel value="Auth Type : "/>
+                        <p:selectOneMenu value="#{homeController.request.authType}">
+                            <f:selectItem itemLabel="No Auth" itemValue="No"/>
+                            <f:selectItem itemLabel="Basic Auth" itemValue="Basic"/>
+                            <f:selectItem itemLabel="Digest Auth" itemValue="Digest"/>
+                            <f:selectItem itemLabel="OAuth 1.0" itemValue="OAuth1"/>
+                            <f:selectItem itemLabel="OAuth 2.0" itemValue="OAuth2"/>
+                            <f:selectItem itemLabel="Hawk Authentication" itemValue="Hawk"/>
+                            <f:selectItem itemLabel="AWS Signature" itemValue="AWS"/>
+                        </p:selectOneMenu>
+                    </p:tab>
+                </p:tabView>
+
+            </h:form>
+        </h:panelGroup>
+
+    </h:panelGrid>
+</h:body>
+</html>
